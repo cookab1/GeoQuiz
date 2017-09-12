@@ -34,7 +34,7 @@ public class QuizActivity extends AppCompatActivity {
 
     private int mCurrentIndex = 0;
     private boolean mIsCheater;
-    //private int mQuestionCount = 0;
+    private int[] mGrade = {-1, -1, -1, -1, -1, -1};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,15 +156,42 @@ public class QuizActivity extends AppCompatActivity {
         } else {
             if(userPressedTrue == answerIsTrue) {
                 messageResId = R.string.correct_toast;
+                mGrade[mCurrentIndex] = 1;
             } else {
                 messageResId = R.string.incorrect_toast;
+                mGrade[mCurrentIndex] = 0;
             }
         }
 
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
 
+        if (isDone()) {
+            double score = 0;
+            String grade;
+            for(int i = 0; i < 6; i++) {
+                score += mGrade[i];
+            }
+            score = (score / 6) * 100;
+            grade = "Grade: " + (int)score + "%";
+            Toast.makeText(this, grade, Toast.LENGTH_SHORT).show();
+            resetGrade();
+        }
+
         //mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
         //updateQuestion();
+    }
+
+    private boolean isDone() {
+        boolean done = true;
+        for(int i = 0; i < 6; i++)
+            if (mGrade[i] < 0)
+                done = false;
+        return done;
+    }
+    private void resetGrade() {
+        for(int i = 0; i < 6; i++) {
+            mGrade[i] = -1;
+        }
     }
 
 /*
